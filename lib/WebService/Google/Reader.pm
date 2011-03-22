@@ -15,7 +15,7 @@ use WebService::Google::Reader::Constants;
 use WebService::Google::Reader::Feed;
 use WebService::Google::Reader::ListElement;
 
-our $VERSION = '0.151';
+our $VERSION = '0.16';
 $VERSION = eval $VERSION;
 
 __PACKAGE__->mk_accessors(qw(
@@ -613,12 +613,9 @@ sub _encode_feed {
 
     my @paths;
     for my $f ('ARRAY' eq ref $feed ? @$feed : ($feed)) {
-        my $path = $f;
-	if ('user/' eq substr $f, 0, 5) {
-            $path = ($escape ? uri_escape($f) : $f);
-        } elsif ('feed/' ne substr $f, 0, 5) {
-            $path = 'feed/' . ($escape ? uri_escape($f) : $f);
-        }
+        my $path = ($escape ? uri_escape($f) : $f);
+        $path = "feed/$path"
+            if 'user/' ne substr $f, 0, 5 and 'feed/' ne substr $f, 0, 5;
         push @paths, $path;
     }
 
